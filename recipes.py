@@ -1,41 +1,39 @@
 def get_ingredients_list():
-    #собираем словарь ингредиентов для каждого блюда
+    # собираем словарь ингредиентов для каждого блюда
     i1 = ingredients[0]
-    i2 = ingredients[1].replace(' ','')
-    i3 = ingredients[2].replace(' ','')
-    ingredient_dict = {'ingredient_name':i1, 'quantity':i2, 'measure':i3}
+    i2 = ingredients[1].replace(' ', '')
+    i3 = ingredients[2].replace(' ', '')
+    ingredient_dict = {'ingredient_name': i1, 'quantity': i2, 'measure': i3}
     dish_list.append(ingredient_dict)
     return dish_list
 
 
 def get_shop_list_by_dishes(dishes, person_count):
     shop_list = {}
-    for dish in dishes: # цикл по блюдам из списка
+    for dish in dishes:  # цикл по блюдам из списка
         for dish_name in cook_book.keys():
             if dish == dish_name:
                 ingredient_list = cook_book.get(dish)
                 for ingredient in ingredient_list:
                     quantity_in_list = int(ingredient['quantity']) * person_count
-                    # сюда нужно засунуть проверку наличия ингредиента в shop_list{}
-                    # if ingredient not in shop_list.keys(): # но это не работает!!!
-                    #     ingredient_dict = {'measure': ingredient['measure'], 'quantity': quantity_in_list}
-                    # else:
-                    #     sum_quantity = quantity_in_list + (кол-во имеющегося ингредиента)
-                    #     ingredient_dict = {'measure': ingredient['measure'], 'quantity': sum_quantity}
-                    ingredient_dict = {'measure': ingredient['measure'], 'quantity': quantity_in_list}
-                    # вместо строки выше должно обрабатываться условие
-                    shop_list[ingredient['ingredient_name']] = ingredient_dict
-                    # shop_list[ingredient['ingredient_name']] = {'measure':ingredient['measure'], 'quantity':quantity_in_list}
-                    # стоит ли объединять в такие конструкции или лучше вводить-обрабатывать переменные по шагам?
+                    #  проверка наличия ингредиента в shop_list{}
+                    if ingredient['ingredient_name'] not in shop_list.keys():
+                        shop_dict = {'measure': ingredient['measure'], 'quantity': quantity_in_list}
+                    else:
+                        iin = ingredient['ingredient_name']
+                        # iin - вспомогательная переменная, чтобы следующая формула выглядела полегче,
+                        # суть название ингредиента
+                        sum_quantity = quantity_in_list + shop_list.get(iin)['quantity']
+                        shop_dict = {'measure': ingredient['measure'], 'quantity': sum_quantity}
+                    shop_list[ingredient['ingredient_name']] = shop_dict
     print(shop_list)
     return
 
 
 cook_book = {}
 with open('recipes.txt', encoding="utf-8") as f:
-    f.readline()
     while True:
-        #название блюда
+        # название блюда
         recipe_name = f.readline().strip()
         if not recipe_name:
             break
@@ -55,4 +53,4 @@ with open('recipes.txt', encoding="utf-8") as f:
 # print(cook_book)
 
 # get_shop_list_by_dishes()
-get_shop_list_by_dishes(['Фахитос', 'Омлет'], 2)
+get_shop_list_by_dishes(['Омлет', 'Омлет'], 2)
